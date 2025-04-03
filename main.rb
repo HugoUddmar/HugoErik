@@ -5,20 +5,22 @@ def input()
 end
 
 def write(string, dag)
-    fil = File.open("//dagbok//#{dag}.txt", "w")
+    fil = File.open("dagbok//#{dag}.txt", "w")
     fil.puts string
-    puts "hej"
     fil.close
 end
-write("hejehejehj", 1)
 
 def whichday()
-    
+    date = Time.now.strftime("%d-%m-%Y")
+    return date
 end
 
-def main
-  
+def main()
+    write("hejehejehj", whichday())
+    write("hejehhj", 2)
+    p whichday()
 end
   
+main()
 
 
