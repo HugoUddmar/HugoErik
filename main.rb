@@ -15,6 +15,11 @@ def whichday()
     return date
 end
 
+def whichtime()
+    time = Time.now.strftime("%H:%M")
+    return time
+end
+
 def main()
     write("hejehejehj", whichday())
     write("hejehhj", 2)
