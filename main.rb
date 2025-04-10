@@ -14,6 +14,20 @@ def write(string, dag)
     newString = ""
     newString = string
 
+    i = 49
+    while i < newString.length
+        if newString[i] == " "
+            newString[i] == "\n"
+        else
+            y = 0
+            while newString[i-y] != " "
+                y += 1
+            end
+            newString[i-y+1] = "\n"
+        end
+        i += 49
+    end
+
     i = 0
     while i < newString.length
         if newString[i] == "\t"
@@ -77,7 +91,7 @@ def main()
       "
         choice = gets.chomp
        while !val.include?(choice)
-        puts "fel inpuit"
+        puts "fel input"
         choice = gets.chomp
        end
 
