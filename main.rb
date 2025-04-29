@@ -1,3 +1,48 @@
+def kryptering(string)
+    alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
+    encryptedString = ""
+    encryptedString = string
+    
+    i = 0
+    while i < encryptedString.length
+        encryptedString[i] = encryptedString[i].downcase
+        y = 0
+        while y < alphabet.length
+            if encryptedString[i] == alphabet[y]
+                index = y + 1000
+                index = index % 48
+                encryptedString[i] = alphabet[index]
+                y = alphabet.length
+            end
+            y += 1
+        end
+        i += 1
+    end
+    
+    return encryptedString
+end
+
+def dekryptering(string)
+    alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
+    decryptedString = ""
+    decryptedString = string
+
+    i = 0
+    while i < decryptedString.length
+        y = 0
+        while y < alphabet.length
+            if decryptedString[i] == alphabet[y]
+                index = y - 1000
+                index = index % 48
+                decryptedString[i] = alphabet[index]
+            end
+            y += 1
+        end
+        i += 1
+    end
+
+    return decryptedString
+end
 
 # Beskrivning: Den här funktionen tar en text och datum och skapar en textfil med texten, och dagen blir namnet och rubriken i textfilen.
 # Om filen redan finns, kommer den endast lägga till texten och fortsätta under det som redan skrivits.
@@ -9,7 +54,6 @@
 #
 #
 #
-
 def write(string, dag)
     newString = ""
     newString = string
@@ -55,7 +99,7 @@ def write(string, dag)
 end
 
 def read(dag)
-    x = Dir.chdir("dagbok")
+   x = Dir.chdir("dagbok")
     x = Dir.glob("*")
     puts " "
     puts "Vilken fil vill du läsa?"
@@ -71,6 +115,9 @@ def read(dag)
     puts"- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     if !File.exist?("dagbok//#{dag}.txt")
     end
+    x = Dir.chdir("..")
+  
+  
 end
 
 def getDay()
@@ -83,13 +130,28 @@ def getTime()
     return time
 end
 
+def password()
+    password = File.read("password.txt")
+    if password == ""
+        p "du har inget löseord, skriv in vilket löseord du vill ha:"
+       word = gets.chomp.downcase
+      fil = File.open("password.txt","w")
+      fil.puts word
+      fil.close
+    end
+    password = File.read("password.txt")
+    password[password.length-1] = ""
+end
+
 def main()
     run = true
-    i = 5
+    i = 0
     dagbokslista = []
     val = ["1","2","3"]
     while run
-        puts "Hej! skriv ditt dagbok, vilken funktion vill du använda? 
+        puts "Välkommen till din digitala dagbok"
+        password()
+        puts "Hej! vilken funktion vill du använda? 
         
         1: skrivläge
         2: läsläge
@@ -104,7 +166,12 @@ def main()
         if choice == val[0]
           puts "Skriv din text, om du vill byta rad, klicka på tab"
           text = gets.chomp
-          write(text,i)
+          i +=1
+          #write(text,i)
+          res= kryptering(text)
+          p res
+         p dekryptering(res)
+         
         elsif choice == val[1]
             read(i)
         elsif choice == val[2]
