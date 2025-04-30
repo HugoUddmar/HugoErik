@@ -1,3 +1,64 @@
+def kryptering2(string)
+    alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
+    encryptedString = ""
+    
+    i = 0
+    while i < string.length
+        string[i] = string[i].downcase
+        y = 0
+        while y < alphabet.length
+            if string[i] == alphabet[y]
+                value = y + 49
+                y = alphabet.length
+                while value > 48
+                    tecken = rand(value/3 + 1..48)
+                    value -= tecken
+                    encryptedString += alphabet[tecken-1]
+                end
+
+                encryptedString += alphabet[value-1]
+            end
+            y += 1
+        end
+        i += 1
+    end
+    
+    return encryptedString
+end
+
+def dekryptering2(string)
+    alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
+    decryptedString = ""
+    
+    i = 0
+    while i < string.length - 2
+        y = 0
+        value = 0
+        while y < alphabet.length
+            if string[i] == alphabet[y]
+                value += y + 1
+            end
+
+            if string[i+1] == alphabet[y]
+                value += y + 1
+                y = alphabet.length
+            end
+
+            if string[i+3] == alphabet[y]
+                value += y + 1
+                y = alphabet.length
+            end
+            decryptedString += alphabet[value-48]
+            
+            y += 1
+        end
+        i += 3
+    end
+    
+    return decryptedString
+end
+
+
 def kryptering(string)
     alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
     encryptedString = ""
@@ -132,49 +193,81 @@ end
 
 def password()
     password = File.read("password.txt")
+    
     if password == ""
-        p "du har inget löseord, skriv in vilket löseord du vill ha:"
-       word = gets.chomp.downcase
+        puts "du har inget löseord, skriv in vilket löseord du vill ha:"
+       word = gets.chomp
       fil = File.open("password.txt","w")
       fil.puts word
       fil.close
     end
+
     password = File.read("password.txt")
     password[password.length-1] = ""
+    puts "Skriv in ditt lösenord:"
+    input = gets.chomp
+
+    while input != password
+        puts "fel lösenord, skriv igen"
+        input = gets.chomp
+    end
+    puts "korrekt lösenord
+    "
+end
+
+def change_password()
+   puts "
+   Skriv in ditt nya lösenord:"
+   word = gets.chomp
+   fil = File.open("password.txt","w")
+   fil.puts word
+   fil.close
 end
 
 def main()
     run = true
     i = 0
     dagbokslista = []
-    val = ["1","2","3"]
+    val = ["1","2","3","4"]
+    puts"Välkommen till din digitala dagbok
+    "
+    password()
+
     while run
-        puts "Välkommen till din digitala dagbok"
-        password()
-        puts "Hej! vilken funktion vill du använda? 
+
+        puts "Vilken funktion vill du använda? 
         
         1: skrivläge
         2: läsläge
-        3: avsluta   
+        3: byt lösenord
+        4: avsluta   
         "
         choice = gets.chomp
-       while !val.include?(choice)
-        puts "fel input"
-        choice = gets.chomp
-       end
+        while !val.include?(choice)
+            puts "fel input"
+            choice = gets.chomp
+        end
 
         if choice == val[0]
-          puts "Skriv din text, om du vill byta rad, klicka på tab"
-          text = gets.chomp
-          i +=1
-          #write(text,i)
-          res= kryptering(text)
-          p res
-         p dekryptering(res)
-         
+            puts "Skriv din text, om du vill byta rad, klicka på tab"
+            text = gets.chomp
+            i +=1
+            #write(text,i)
+            res= kryptering2(text)
+            p res
+           p dekryptering2(res)
+           puts "Skriv din text, om du vill byta rad, klicka på tab"
+           text = gets.chomp
+           i +=1
+           #write(text,i)
+           res= kryptering2(text)
+           p res
+           p dekryptering2(res)
         elsif choice == val[1]
             read(i)
         elsif choice == val[2]
+            change_password()
+        elsif choice == val[3]
             run = false  
             break
         end
