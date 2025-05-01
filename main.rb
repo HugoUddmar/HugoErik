@@ -1,17 +1,17 @@
 def kryptering2(string)
-    alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
+    alphabet = " eanrtsildomkgvhfupäbc.,åöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()&"
+    length = alphabet.length
     encryptedString = ""
     
     i = 0
     while i < string.length
-        string[i] = string[i].downcase
         y = 0
-        while y < alphabet.length
+        while y < length
             if string[i] == alphabet[y]
-                value = y + 49
-                y = alphabet.length
-                while value > 48
-                    tecken = rand(value/3 + 1..48)
+                value = y + length + 1
+                y = length
+                while value > length
+                    tecken = rand(value/2..length)
                     value -= tecken
                     encryptedString += alphabet[tecken-1]
                 end
@@ -27,37 +27,38 @@ def kryptering2(string)
 end
 
 def dekryptering2(string)
-    alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
+    alphabet = " eanrtsildomkgvhfupäbc.,åöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()&"
+    length = alphabet.length
     decryptedString = ""
-    
     i = 0
-    while i < string.length - 2
+    value = 0
+    count = 0
+    while i < string.length
         y = 0
-        value = 0
-        while y < alphabet.length
+        while y < length
             if string[i] == alphabet[y]
                 value += y + 1
+                y = length
             end
 
-            if string[i+1] == alphabet[y]
-                value += y + 1
-                y = alphabet.length
-            end
-
-            if string[i+3] == alphabet[y]
-                value += y + 1
-                y = alphabet.length
-            end
-            decryptedString += alphabet[value-48]
-            
             y += 1
         end
-        i += 3
+
+        if value == 0
+            decryptedString += string[i]
+            count = 0
+        else
+            count += 1
+            if count == 2
+                decryptedString += alphabet[value-length-1]
+                value = 0
+                count = 0
+            end   
+        end
+        i += 1
     end
-    
     return decryptedString
 end
-
 
 def kryptering(string)
     alphabet = "abcdefghijklmnopqrstuvwxyzåäö,. 0123456789/!?%()"
@@ -150,11 +151,12 @@ def write(string, dag)
 
     if !File.exist?("dagbok//#{dag}.txt")
         fil = File.open("dagbok//#{dag}.txt", "w")
-        fil.puts "Dag: #{dag}"
-        fil.puts " "
+        fil.puts kryptering2("Dag: #{dag}")
+        fil.puts ""
         fil.close
     end
     fil = File.open("dagbok//#{dag}.txt", "a")
+    newString = kryptering2(newString)
     fil.puts newString
     fil.close
 end
@@ -171,6 +173,7 @@ def read(dag)
     end
     fil = gets.chomp
     read = File.read(x[(fil.to_i)-1])
+    read = dekryptering2(read)
     puts"- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     puts read
     puts"- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
@@ -197,6 +200,7 @@ def password()
     if password == ""
         puts "du har inget löseord, skriv in vilket löseord du vill ha:"
        word = gets.chomp
+       word = kryptering2(word)
       fil = File.open("password.txt","w")
       fil.puts word
       fil.close
@@ -207,7 +211,7 @@ def password()
     puts "Skriv in ditt lösenord:"
     input = gets.chomp
 
-    while input != password
+    while input != dekryptering2(password)
         puts "fel lösenord, skriv igen"
         input = gets.chomp
     end
@@ -219,6 +223,7 @@ def change_password()
    puts "
    Skriv in ditt nya lösenord:"
    word = gets.chomp
+   word = kryptering2(word)
    fil = File.open("password.txt","w")
    fil.puts word
    fil.close
@@ -251,18 +256,8 @@ def main()
         if choice == val[0]
             puts "Skriv din text, om du vill byta rad, klicka på tab"
             text = gets.chomp
-            i +=1
-            #write(text,i)
-            res= kryptering2(text)
-            p res
-           p dekryptering2(res)
-           puts "Skriv din text, om du vill byta rad, klicka på tab"
-           text = gets.chomp
-           i +=1
-           #write(text,i)
-           res= kryptering2(text)
-           p res
-           p dekryptering2(res)
+            i += 1
+            write(text,i)
         elsif choice == val[1]
             read(i)
         elsif choice == val[2]
