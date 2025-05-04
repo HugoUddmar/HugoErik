@@ -2,14 +2,17 @@ def kryptering2(string)
     alphabet = " eanrtsildomkgvhfupäbc.,åöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()&"
     length = alphabet.length
     encryptedString = ""
-    
+    othersign = true
+
     i = 0
     while i < string.length
         y = 0
+        othersign = true
         while y < length
             if string[i] == alphabet[y]
                 value = y + length + 1
                 y = length
+                othersign = false
                 while value > length
                     tecken = rand(value/2..length)
                     value -= tecken
@@ -20,6 +23,11 @@ def kryptering2(string)
             end
             y += 1
         end
+
+        if othersign
+            encryptedString += string[i]
+        end
+
         i += 1
     end
     
@@ -57,6 +65,7 @@ def dekryptering2(string)
         end
         i += 1
     end
+
     return decryptedString
 end
 
@@ -198,8 +207,16 @@ def password()
     password = File.read("password.txt")
     
     if password == ""
+        raise "no"
+    end
+
+    if password == "    "
         puts "du har inget löseord, skriv in vilket löseord du vill ha:"
        word = gets.chomp
+       while word.length < 5
+        puts "Lösenordet måste vara minst 5 tecken långt"
+        word = gets.chomp
+       end
        word = kryptering2(word)
       fil = File.open("password.txt","w")
       fil.puts word
