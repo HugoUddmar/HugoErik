@@ -1,11 +1,18 @@
+# Beskrivning: Den här funktionen krypterar en text relativt slumpmässigt
+# 
+# Argument 1: String - Text som skrivs i textfilen
+# Return: Inget
+# Exempel: "Hej" => returnar inget
+#
 def kryptering2(string)
-    alphabet = " eanrtsildomkgvhfupäbc.,åöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()&"
+    alphabet = " eanrtsildomkgvhfupäbc.,\nåöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()"
     length = alphabet.length
     encryptedString = ""
     othersign = true
 
     i = 0
     while i < string.length
+
         y = 0
         othersign = true
         while y < length
@@ -30,12 +37,11 @@ def kryptering2(string)
 
         i += 1
     end
-    
     return encryptedString
 end
 
 def dekryptering2(string)
-    alphabet = " eanrtsildomkgvhfupäbc.,åöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()&"
+    alphabet = " eanrtsildomkgvhfupäbc.,\nåöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()"
     length = alphabet.length
     decryptedString = ""
     i = 0
@@ -58,6 +64,10 @@ def dekryptering2(string)
         else
             count += 1
             if count == 2
+                index = value - length - 1
+                if index < 0 || index > 77
+                    raise "nono"
+                end
                 decryptedString += alphabet[value-length-1]
                 value = 0
                 count = 0
@@ -65,7 +75,6 @@ def dekryptering2(string)
         end
         i += 1
     end
-
     return decryptedString
 end
 
@@ -111,7 +120,7 @@ def dekryptering(string)
         end
         i += 1
     end
-
+    p decryptedString
     return decryptedString
 end
 
@@ -126,8 +135,21 @@ end
 #
 #
 def write(string, dag)
+    if !File.exist?("dagbok//#{dag}.txt")
+        fil = File.open("dagbok//#{dag}.txt", "w")
+        fil.puts kryptering2("Dag: #{dag}\n\n")
+        fil.close
+    end
+
+    file = File.read("dagbok//#{dag}.txt")
+    file[file.length-1] = ""
+
     newString = ""
     newString = string
+
+    wholeString = dekryptering2(file) + newString
+
+    newString = wholeString
 
     i = 0
     while i < newString.length
@@ -144,29 +166,21 @@ def write(string, dag)
             count = 0
         elsif count == 49
             count = 0
-            if newString[i] == " "
-                newString[i] = "\n"
-            else
-                y = 0
-                while newString[i-y] != " "
-                    y += 1
-                end
-                newString[i-y] = "\n"
+            y = 1
+            index = newString.length - y
+            while index > i
+                index = newString.length - y
+                newString[index + 1] = newString[index]
+                y += 1
             end
+            newString[i] = "\n"
         end
         count += 1
         i += 1
     end
 
-    if !File.exist?("dagbok//#{dag}.txt")
-        fil = File.open("dagbok//#{dag}.txt", "w")
-        fil.puts kryptering2("Dag: #{dag}")
-        fil.puts ""
-        fil.close
-    end
-    fil = File.open("dagbok//#{dag}.txt", "a")
-    newString = kryptering2(newString)
-    fil.puts newString
+    fil = File.open("dagbok//#{dag}.txt", "w")
+    fil.puts kryptering2(newString)
     fil.close
 end
 
@@ -182,6 +196,7 @@ def read(dag)
     end
     fil = gets.chomp
     read = File.read(x[(fil.to_i)-1])
+    read[read.length-1] = ""
     read = dekryptering2(read)
     puts"- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     puts read
@@ -206,7 +221,7 @@ end
 def password()
     password = File.read("password.txt")
     
-    if password == ""
+    if password == "" || password == "\n"
         raise "no"
     end
 
@@ -240,6 +255,10 @@ def change_password()
    puts "
    Skriv in ditt nya lösenord:"
    word = gets.chomp
+   while word.length < 5
+    puts "Lösenordet måste vara minst 5 tecken långt"
+    word = gets.chomp
+   end
    word = kryptering2(word)
    fil = File.open("password.txt","w")
    fil.puts word
@@ -248,7 +267,7 @@ end
 
 def main()
     run = true
-    i = 0
+    i = 1
     dagbokslista = []
     val = ["1","2","3","4"]
     puts"Välkommen till din digitala dagbok
@@ -273,7 +292,7 @@ def main()
         if choice == val[0]
             puts "Skriv din text, om du vill byta rad, klicka på tab"
             text = gets.chomp
-            i += 1
+            i = 1
             write(text,i)
         elsif choice == val[1]
             read(i)
@@ -286,7 +305,7 @@ def main()
         i += 1
     end
 end
-  
+
 main()
 
 
