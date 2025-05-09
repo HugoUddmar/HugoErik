@@ -60,7 +60,7 @@ end
 
 # Beskrivning: Funktionen dekrypterar en text. Den tar två tecken i taget och adderar deras placering (index+1) i strängen signs och subtraherar längden av signs från värdet.
 # Sen tar den det värdet - 1 som index i signs och det blir det dekrypterade tecknet.
-# Om ett tecken inte är med i signs dekrypteras det inte. Om dekrypteringen inte går jämt ut (Slutgiltiga index är utanför signs) kastas ett fel ut och progammet kraschar.
+# Om ett tecken inte är med i signs dekrypteras det inte. Om dekrypteringen inte går jämt ut (någon har försökt hacka krypteringen och slutgiltiga index är utanför signs) kastas ett fel ut och progammet kraschar.
 # 
 # Parameter 1: String - strängen som ska dekrypteras
 # Return: String - dekrypterade strängen
@@ -275,7 +275,7 @@ end
 def password()
     password = File.read("password.txt")
     
-    if password == "" || password == "\n"
+    if password.length < 5 && password != "    "
         raise "Password has been delted, security breach"
     end
 
