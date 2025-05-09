@@ -1,4 +1,4 @@
-# Filnamn: main.rb
+# Filnamn: ErikHugo.rb
 # Syfte: En digital dagbok
 # Författare: Hugo Uddmar, Erik Karlen
 # Datum: 2025-05-09
@@ -338,7 +338,9 @@ def main()
         2: läsläge
         3: byt lösenord
         4: avsluta   
+        
         "
+
         choice = gets.chomp
         while !val.include?(choice)
             puts "fel input"
@@ -354,12 +356,19 @@ def main()
             end
             write(text,i)
             i += 1
+
         elsif choice == val[1]
+
             read(i)
+
         elsif choice == val[2]
+
             change_password()
+
         elsif choice == val[3]
+
             run = false  
+
             break
         end
        
