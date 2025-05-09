@@ -166,14 +166,27 @@ def write(string, dag)
             count = 0
         elsif count == 49
             count = 0
-            y = 1
-            index = newString.length - y
-            while index > i
-                index = newString.length - y
-                newString[index + 1] = newString[index]
+            bool = true
+            y = 0
+            while y < 30
+                if newString[i-y] == " "
+                    newString[i-y] = "\n"
+                    y = 30
+                    bool = false
+                end
                 y += 1
             end
-            newString[i] = "\n"
+
+            if bool 
+                y = 1
+                index = newString.length - y
+                while index > i
+                    index = newString.length - y
+                    newString[index + 1] = newString[index]
+                    y += 1
+                end
+                newString[i] = "\n"
+            end
         end
         count += 1
         i += 1
