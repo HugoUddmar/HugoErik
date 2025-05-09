@@ -1,12 +1,23 @@
-# Beskrivning: Den här funktionen krypterar en text relativt slumpmässigt
-# 
-# Argument 1: String - Text som skrivs i textfilen
-# Return: Inget
-# Exempel: "Hej" => returnar inget
+
+
+
+
+
+# Beskrivning: Den här funktionen krypterar en text relativt slumpmässigt.
+# Den tar ett tecken och letar efter dess placering (index+1) i strängen signs i funktionen. Sen adderas placeringen med
+# längden på strängen signs vilket blir värde1(int). Sen krypterar den slumpmässigt det tecknet med två andra tecken där deras placering i signs summerat blir värde1.
+# Om tecknet inte finns i signs krypteras det inte och det sista tecknet i signs ')' blir alltid '))'. Det finns alltså fler kombinationer på lägre index i signs. 
+# Det som händer är att ett värde t.ex. 60 krypteras genom att beskriva det som 30+30 / 15+45 / 10+50 t.ex. (alltid två tecken) och att det även sker med tecken som inte är siffror.
+# Strängen signs är även ordnad i tecknen som är använda mest på svenska.
 #
+# Argument 1: String - Text som ska dekrypteras
+# Return: String - Krypterad text
+# Exempel: "Hej" => "3WWäWV"
+# Exempel: "Hej" => "3W8lWV"
+# Exempel: "+" => "+"
 def kryptering2(string)
-    alphabet = " eanrtsildomkgvhfupäbc.,\nåöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()"
-    length = alphabet.length
+    signs = " eanrtsildomkgvhfupäbc.,\nåöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()"
+    length = signs.length
     encryptedString = ""
     othersign = true
 
@@ -16,17 +27,17 @@ def kryptering2(string)
         y = 0
         othersign = true
         while y < length
-            if string[i] == alphabet[y]
+            if string[i] == signs[y]
                 value = y + length + 1
                 y = length
                 othersign = false
                 while value > length
                     tecken = rand(value/2..length)
                     value -= tecken
-                    encryptedString += alphabet[tecken-1]
+                    encryptedString += signs[tecken-1]
                 end
 
-                encryptedString += alphabet[value-1]
+                encryptedString += signs[value-1]
             end
             y += 1
         end
@@ -40,9 +51,19 @@ def kryptering2(string)
     return encryptedString
 end
 
+# Beskrivning: Funktionen dekrypterar en text. Den tar två tecken i taget och adderar deras placering (index+1) i 
+# Strängen signs och subtraherar längden av signs från värdet. Sen tar den det värdet - 1 som index i signs och det blir det dekrypterade tecknet.
+# Om ett tecken inte är med i signs dekrypteras det inte. Om dekrypteringen inte går jämt ut (Slutgiltiga index är utanför signs)
+# Kastas ett fel ut och progammet kraschar.
+# 
+# Parameter 1: String - strängen som ska dekrypteras
+# Return: String - dekrypterade strängen
+# Exempel: "3WWäWV" => "Hej"
+# Exempel: "3W8lWV" => "Hej"
+# Exempel: "+" => "+"
 def dekryptering2(string)
-    alphabet = " eanrtsildomkgvhfupäbc.,\nåöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()"
-    length = alphabet.length
+    signs = " eanrtsildomkgvhfupäbc.,\nåöyjxwzqEANRTSILDOMKGVHFUPÄBCÅÖYJXWZQ0123456789/!?%()"
+    length = signs.length
     decryptedString = ""
     i = 0
     value = 0
@@ -50,7 +71,7 @@ def dekryptering2(string)
     while i < string.length
         y = 0
         while y < length
-            if string[i] == alphabet[y]
+            if string[i] == signs[y]
                 value += y + 1
                 y = length
             end
@@ -66,9 +87,9 @@ def dekryptering2(string)
             if count == 2
                 index = value - length - 1
                 if index < 0 || index > 77
-                    raise "nono"
+                    raise "Security breach dont mess with us."
                 end
-                decryptedString += alphabet[value-length-1]
+                decryptedString += signs[value-length-1]
                 value = 0
                 count = 0
             end   
@@ -125,14 +146,19 @@ def dekryptering(string)
 end
 
 # Beskrivning: Den här funktionen tar en text och datum och skapar en textfil med texten, och dagen blir namnet och rubriken i textfilen.
-# Om filen redan finns, kommer den endast lägga till texten och fortsätta under det som redan skrivits.
+# Om filen redan finns, kommer den endast lägga till texten och fortsätta under det som redan skrivits. Den skapar även radbrytning
 # 
 # Argument 1: String - Text som skrivs i textfilen
 # Argument 2: String - Datum som skrivs i textfilen som rubrik och titeln av textfilen
-# Return: Inget
-# Exempel: "Hej" => returnar inget
+# Return: void
 #
+# Exempel: "Hej dagboken" , 1  (om filen inte finns) => skriver strängen krypterat i filen 1.txt: 
+# Dag: 1
 #
+# Hej dagboken
+#
+# Exempel: "Hej dagboken" , 1  (om filen finns) => skriver strängen krypterat i filen 1.txt efter annan text utan space: 
+# Hej dagboken
 #
 def write(string, dag)
     if !File.exist?("dagbok//#{dag}.txt")
@@ -142,7 +168,9 @@ def write(string, dag)
     end
 
     file = File.read("dagbok//#{dag}.txt")
-    file[file.length-1] = ""
+    if file != ""
+        file[file.length-1] = ""
+    end
 
     newString = ""
     newString = string
@@ -197,6 +225,19 @@ def write(string, dag)
     fil.close
 end
 
+
+# Beskrivning: Den här funktionen skriver ut för användaren vilka filer som finns i mappen dagbok och låter sedan användaren välja vilken av dessa filer hen vill läsa.
+# Filerna som användaren kan välja mellan visas i en lista och användaren väljer vilken hen vill läsa genom att skriva in siffran som korresponderat ill dess placering i listan.
+#
+# Argument: void
+# Return: void
+#
+# Exempel (ingen sträng i filen (med en tab) ): "hej" => sparas krypterat i password.txt
+# Exempel (ingen sträng i filen (utan en tab) ): raise: "Password has been delted, security breach"
+# Exempel (strängen "hej" har sparats krypterat i password.txt): "hej" => användaren får tillgång till programmets funktioner
+# Exempel (strängen "hej" har sparats krypterat i password.txt): "hejdå" => användaren bes skriva in lösenordet igen
+#
+
 def read(dag)
    x = Dir.chdir("dagbok")
     x = Dir.glob("*")
@@ -209,7 +250,7 @@ def read(dag)
     end
     fil = gets.chomp
     read = File.read(x[(fil.to_i)-1])
-    read[read.length-1] = ""
+    read[read.length] = ""
     read = dekryptering2(read)
     puts"- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
     puts read
@@ -231,24 +272,41 @@ def getTime()
     return time
 end
 
+# Beskrivning: Den här funktionen läser av ett krypterat lösenord (sträng) som sparats i filen password.txt.
+# Om det inte har skapats ett lösenord än finns bara en tab i documentet (som vi placerade där) och användarer får skriva in ett nytt. Detta lösenord måste vara över 5 tecken långt.
+# Om det redan finns ett lösenord (sträng) i filen får användare försöka låsa upp dagboken genom att skirva in sitt lösenord i terminalen och denna sträng jämmförs med lösenordet i filen som körs genom en dektrypteringsfuntkion.
+# Slutligen finns det en säkerhetsfunktion som kollar om password.txt filen är tom, vilket betyder att någon har tagit bort lösenordet (när vi skapar filen lägger vi in en tab). 
+#
+# Argument: void
+# Return: void
+#
+# Exempel (ingen sträng i filen (med en tab) ): "hej" => sparas krypterat i password.txt
+# Exempel (ingen sträng i filen (utan en tab) ): raise: "Password has been delted, security breach"
+# Exempel (strängen "hej" har sparats krypterat i password.txt): "hej" => användaren får tillgång till programmets funktioner
+# Exempel (strängen "hej" har sparats krypterat i password.txt): "hejdå" => användaren bes skriva in lösenordet igen
+#
+
+
 def password()
     password = File.read("password.txt")
     
     if password == "" || password == "\n"
-        raise "no"
+        raise "Password has been delted, security breach"
     end
 
     if password == "    "
         puts "du har inget löseord, skriv in vilket löseord du vill ha:"
-       word = gets.chomp
-       while word.length < 5
-        puts "Lösenordet måste vara minst 5 tecken långt"
         word = gets.chomp
-       end
-       word = kryptering2(word)
-      fil = File.open("password.txt","w")
-      fil.puts word
-      fil.close
+
+        while word.length < 5
+            puts "Lösenordet måste vara minst 5 tecken långt"
+            word = gets.chomp
+        end
+        
+        word = kryptering2(word)
+        fil = File.open("password.txt","w")
+        fil.puts word
+        fil.close
     end
 
     password = File.read("password.txt")
@@ -305,7 +363,6 @@ def main()
         if choice == val[0]
             puts "Skriv din text, om du vill byta rad, klicka på tab"
             text = gets.chomp
-            i = 1
             write(text,i)
         elsif choice == val[1]
             read(i)
