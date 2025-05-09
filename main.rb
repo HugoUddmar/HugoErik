@@ -1,8 +1,3 @@
-
-
-
-
-
 # Beskrivning: Den här funktionen krypterar en text relativt slumpmässigt.
 # Den tar ett tecken och letar efter dess placering (index+1) i strängen signs i funktionen. Sen adderas placeringen med
 # längden på strängen signs vilket blir värde1(int). Sen krypterar den slumpmässigt det tecknet med två andra tecken där deras placering i signs summerat blir värde1.
@@ -160,6 +155,17 @@ end
 # Exempel: "Hej dagboken" , 1  (om filen finns) => skriver strängen krypterat i filen 1.txt efter annan text utan space: 
 # Hej dagboken
 #
+# Exempel: "AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA" , 1  (om filen inte finns) => skriver strängen krypterat i filen 1.txt: 
+# Dag: 1
+#
+# AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
+# AAAAA 
+#
+# Exempel: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" , 1  (om filen inte finns) => skriver strängen krypterat i filen 1.txt: 
+# Dag: 1
+#
+# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+# AAA
 def write(string, dag)
     if !File.exist?("dagbok//#{dag}.txt")
         fil = File.open("dagbok//#{dag}.txt", "w")
@@ -285,8 +291,6 @@ end
 # Exempel (strängen "hej" har sparats krypterat i password.txt): "hej" => användaren får tillgång till programmets funktioner
 # Exempel (strängen "hej" har sparats krypterat i password.txt): "hejdå" => användaren bes skriva in lösenordet igen
 #
-
-
 def password()
     password = File.read("password.txt")
     
